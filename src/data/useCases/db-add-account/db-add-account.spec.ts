@@ -1,9 +1,13 @@
 import { DbAddAccount } from './db-add-account'
 import { Encrypter } from '../../protocols/encrypter'
+import { AddAccountModel } from '../../../domain/useCases/add-account'
+import { AccountModel } from '../../../domain/models/account'
+import { AddAccountRepo } from '../../protocols/add-account-repo'
 
 interface SutTypes {
   sut: DbAddAccount
   encrypterSub: Encrypter
+  AddAccountRepoStub: AddAccountRepo
 }
 const makeEncrypt = (): Encrypter => {
   class Encrypterstub {
@@ -13,11 +17,27 @@ const makeEncrypt = (): Encrypter => {
   }
   return new Encrypterstub()
 }
+const makeAddAccountRepo = (): AddAccountRepo => {
+  class AddAccountRepoStub implements AddAccountRepo {
+    async add (accountData: AddAccountModel): Promise<AccountModel> {
+      const fakeAccount = {
+        id: 'valid_id',
+        name: 'valid_name',
+        email: 'valid_email',
+        password: 'hashed_password'
+      }
+      return new Promise(resolve => resolve(fakeAccount))
+    }
+  }
+  return new AddAccountRepoStub()
+}
 
 const makeSut = (): SutTypes => {
   const encrypterSub = makeEncrypt()
-  const sut = new DbAddAccount(encrypterSub)
-  return { sut, encrypterSub }
+  const AddAccountRepoStub = makeAddAccountRepo()
+  const sut = new DbAddAccount(encrypterSub, AddAccountRepoStub)
+
+  return { sut, encrypterSub, AddAccountRepoStub }
 }
 
 describe('DbAddAccount use case', () => {
@@ -42,5 +62,20 @@ describe('DbAddAccount use case', () => {
     }
     const result = sut.add(accountData)
     await expect(result).rejects.toThrow()
+  })
+  test('Should call addAccountrepo with correct values', async () => {
+    const { sut, AddAccountRepoStub } = makeSut()
+    const addSpy = jest.spyOn(AddAccountRepoStub, 'add')
+    const accountData = {
+      name: 'valid_name',
+      email: 'valid_email',
+      password: 'valid_password'
+    }
+    await sut.add(accountData)
+    await expect(addSpy).toHaveBeenCalledWith({
+      name: 'valid_name',
+      email: 'valid_email',
+      password: 'hashed_password'
+    })
   })
 })
