@@ -26,6 +26,7 @@
   "scripts": {
     "test": "jest --passWithNoTests --silent --noStackTrace --runInBand",
     "test:unit": "yarn test -- --watch -c jest-unit-config.js",
+    "test:verbose":"jest --passWithNoTests --runInBand ",
     "test:integration": "yarn test -- --watch -c jest-integration-config.js",
     "test:staged": "yarn test -- --findRelatedTests",
     "test:ci": "yarn test -- --coverage"
@@ -35,4 +36,5 @@
     "mongodb": "^3.6.2",
     "validator": "^13.1.17"
   }
+ 
 }
