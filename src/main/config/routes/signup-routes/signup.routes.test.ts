@@ -11,7 +11,7 @@ describe('CORS', () => {
     await MongoHelper.disconnect()
   })
   beforeEach(async () => {
-    const accountCollections = MongoHelper.getCollection('accounts')
+    const accountCollections = await MongoHelper.getCollection('accounts')
     await accountCollections.deleteMany({})
   })
 
