@@ -1,16 +1,28 @@
 import { AccountModel } from '../../../domain/models/account'
 import { findByEmailRepo } from '../../protocols/find-by_email-repo'
 import { DbAuthentication } from './db-authentication'
+import { AuthenticateModel } from '../../../domain/useCases/authentication'
+
+const makeFakeAccout = (): AccountModel => {
+  return {
+    id: 'any_id',
+    name: 'any_name',
+    email: 'any_email@mail.com',
+    password: 'any_password'
+  }
+}
+const makeFakeAuth = (): AuthenticateModel => {
+  return {
+
+    email: 'any_email@mail.com',
+    password: 'any_password'
+  }
+}
 
 const makefindByEmailRepo = (): findByEmailRepo => {
   class FindByEmailRepoStub implements findByEmailRepo {
     async find (email: string): Promise<AccountModel> {
-      const account: AccountModel = {
-        id: 'any_id',
-        name: 'any_name',
-        email: 'any_email@mail.com',
-        password: 'any_password'
-      }
+      const account = makeFakeAccout()
       return Promise.resolve(account)
     }
   }
@@ -33,10 +45,7 @@ describe('Dbauthentication useCase', () => {
   test('should call findByEmailRepo with correct email', async () => {
     const { sut, findByEmailRepoStub } = makeSut()
     const loadSpy = jest.spyOn(findByEmailRepoStub, 'find')
-    await sut.auth({
-      email: 'any_email@mail.com',
-      password: 'any_password'
-    })
+    await sut.auth(makeFakeAuth())
     expect(loadSpy).toHaveBeenCalledWith('any_email@mail.com')
   })
 })
