@@ -5,6 +5,10 @@ import { MissingParamError } from '../../errors/missing-param-error'
 
 export class LoginController implements Controller {
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
-    return badRequest(new MissingParamError('Email not provided'))
+    if (!httpRequest.body.email) {
+      return Promise.resolve(badRequest(new MissingParamError('Email not provided')))
+    }
+
+    return Promise.resolve(badRequest(new MissingParamError('Password not provided')))
   }
 }
