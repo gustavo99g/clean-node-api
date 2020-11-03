@@ -1,6 +1,6 @@
 import { Controller } from '../../protocols/controller'
 import { HttpRequest, HttpResponse } from '../../protocols/http'
-import { badRequest, ok, serverError, unauthorized } from '../../helpers/http-helper'
+import { badRequest, ok, serverError, unauthorized } from '../../helpers/http/http-helper'
 import { Authentication } from '../../../domain/useCases/authentication'
 import { Validation } from '../../helpers/validator/validation'
 

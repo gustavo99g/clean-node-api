@@ -1,6 +1,5 @@
 import { LoginController } from './login'
-import { badRequest, serverError, unauthorized, ok } from '../../helpers/http-helper'
-
+import { badRequest, serverError, unauthorized, ok } from '../../helpers/http/http-helper'
 import { HttpRequest } from '../../protocols/http'
 import { Authentication } from '../../../domain/useCases/authentication'
 import { Validation } from '../../helpers/validator/validation'
