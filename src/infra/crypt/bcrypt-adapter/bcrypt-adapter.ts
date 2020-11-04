@@ -1,6 +1,6 @@
-import { Hasher } from '../../data/protocols/crypto/hasher'
+import { Hasher } from '../../../data/protocols/crypto/hasher'
 import bcrypt from 'bcryptjs'
-import { HashComparer } from '../../data/protocols/crypto/hash-comparer'
+import { HashComparer } from '../../../data/protocols/crypto/hash-comparer'
 
 export class BcryptAdapter implements Hasher, HashComparer {
   async Hash (value: string): Promise<string> {
