@@ -1,8 +1,10 @@
 import { MongoHelper } from '../helpers/mongo-helper'
 import { AccountRepo } from './account'
 import { AddAccountModel } from '../../../../domain/useCases/add-account'
+import { Collection } from 'mongodb'
 
 describe('Account mongo repository', () => {
+  let accountCollections: Collection
   beforeAll(async () => {
     await MongoHelper.connect(process.env.MONGO_URL as string)
   })
@@ -11,7 +13,7 @@ describe('Account mongo repository', () => {
     await MongoHelper.disconnect()
   })
   beforeEach(async () => {
-    const accountCollections = await MongoHelper.getCollection('accounts')
+    accountCollections = await MongoHelper.getCollection('accounts')
     await accountCollections.deleteMany({})
   })
 
@@ -42,11 +44,19 @@ describe('Account mongo repository', () => {
     expect(account?.email).toBe('any_email@email.com')
     expect(account?.password).toBe('any_password')
   })
-
   test('should return null if findByEmail dont find a account', async () => {
     const sut = new AccountRepo()
 
     const account = await sut.findByEmail('invalid_email@email.com')
     expect(account).toBeNull()
+  })
+  test('should update the account accessToken on updateAccessToken success', async () => {
+    const sut = new AccountRepo()
+    const res = await accountCollections.insertOne(makeFakeAccount())
+    expect(res.ops[0].accessToken).toBeFalsy()
+    await sut.updateAccessToken(res.ops[0]._id, 'any_token')
+    const account = await accountCollections.findOne({ _id: res.ops[0]._id })
+    expect(account).toBeTruthy()
+    expect(account.accessToken).toBe('any_token')
   })
 })
