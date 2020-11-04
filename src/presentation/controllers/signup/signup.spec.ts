@@ -5,7 +5,7 @@ import { AddAccount, AddAccountModel } from '../../../domain/useCases/add-accoun
 import { AccountModel } from '../../../domain/models/account'
 import { HttpRequest } from '../../protocols/http'
 import { ok, badRequest } from '../../helpers/http/http-helper'
-import { Validation } from '../../helpers/validator/validation'
+import { Validation } from '../../protocols/validation'
 
 interface SubTypes {
   sut: SignUpController
