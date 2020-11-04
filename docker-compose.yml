@@ -17,4 +17,4 @@ services:
     ports: 
       - "3333:3333"
     links: 
-      -mongo
+      - mongo
