@@ -1,0 +1,20 @@
+version: "3"
+services: 
+  mongo:
+    image: mongo:3
+    restart: always
+    volumes: 
+      - ./data:/data/db
+    ports:
+      - "27017:27017"
+  api:
+    build: .
+    restart: always
+    image: clea-node-api
+    command: yarn start
+    volumes: 
+      - ./dist:/usr/src/clean-node-api/dist
+    ports: 
+      - "3333:3333"
+    links: 
+      -mongo
