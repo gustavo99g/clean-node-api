@@ -1,26 +1,16 @@
 import { SignUpController } from './signup'
 import { MissingParamError } from '../../errors/missing-param-error'
-import { InvalidParamError } from '../../errors/invalid-param-error'
-import { EmailValidator } from '../../protocols/email-validator'
 import { ServerError } from '../../errors/server-error'
 import { AddAccount, AddAccountModel } from '../../../domain/useCases/add-account'
 import { AccountModel } from '../../../domain/models/account'
 import { HttpRequest } from '../../protocols/http'
-import { ok, badRequest, serverError } from '../../helpers/http-helper'
+import { ok, badRequest } from '../../helpers/http/http-helper'
+import { Validation } from '../../helpers/validator/validation'
 
 interface SubTypes {
   sut: SignUpController
-  emailValidatorStub: EmailValidator
   addAccountStub: AddAccount
-}
-
-const makeEmailValidator = (): EmailValidator => {
-  class EmailValidatorStub implements EmailValidator {
-    isValid (email: string): boolean {
-      return true
-    }
-  }
-  return new EmailValidatorStub()
+  validationStub: Validation
 }
 
 const makeAddAccount = (): AddAccount => {
@@ -32,12 +22,21 @@ const makeAddAccount = (): AddAccount => {
   return new AddAccountStub()
 }
 
-const makeSut = (): SubTypes => {
-  const emailValidatorStub = makeEmailValidator()
-  const addAccountStub = makeAddAccount()
-  const sut = new SignUpController(emailValidatorStub, addAccountStub)
+const makeValidation = (): Validation => {
+  class ValidationStub implements Validation {
+    validate (input: any): any {
+      return null
+    }
+  }
+  return new ValidationStub()
+}
 
-  return { sut, emailValidatorStub, addAccountStub }
+const makeSut = (): SubTypes => {
+  const addAccountStub = makeAddAccount()
+  const validationStub = makeValidation()
+  const sut = new SignUpController(addAccountStub, validationStub)
+
+  return { sut, addAccountStub, validationStub }
 }
 
 const fakeRequest = (): HttpRequest => ({
@@ -57,89 +56,6 @@ const fakeAccount = (): AccountModel => ({
 })
 
 describe('SignUp Controller', () => {
-  test('Should return 400 if no name is provided', async () => {
-    const { sut } = makeSut()
-    const httpRequest = {
-      body: {
-        email: 'test@mail.com',
-        password: '123',
-        passwordConfirmation: '123'
-      }
-    }
-    const httpResponse = await sut.handle(httpRequest)
-    expect(httpResponse).toEqual(badRequest(new MissingParamError('name')))
-  })
-  test('Should return 400 if no email is provided', async () => {
-    const { sut } = makeSut()
-    const httpRequest = {
-      body: {
-        name: 'test',
-        password: '123',
-        passwordConfirmation: '123'
-      }
-    }
-    const httpResponse = await sut.handle(httpRequest)
-    expect(httpResponse).toEqual(badRequest(new MissingParamError('email')))
-  })
-  test('Should return 400 if no password is provided', async () => {
-    const { sut } = makeSut()
-    const httpRequest = {
-      body: {
-        name: 'test',
-        email: 'test@mail.com',
-        passwordConfirmation: '123'
-      }
-    }
-    const httpResponse = await sut.handle(httpRequest)
-    expect(httpResponse).toEqual(badRequest(new MissingParamError('password')))
-  })
-  test('Should return 400 if no passwordConfirmation is provided', async () => {
-    const { sut } = makeSut()
-    const httpRequest = {
-      body: {
-        name: 'test',
-        email: 'test@mail.com',
-        password: '123'
-      }
-    }
-    const httpResponse = await sut.handle(httpRequest)
-    expect(httpResponse).toEqual(badRequest(new MissingParamError('passwordConfirmation')))
-  })
-  test('Should return 400 if passwordConfirmation fails', async () => {
-    const { sut } = makeSut()
-    const httpRequest = {
-      body: {
-        name: 'test',
-        email: 'test@mail.com',
-        password: '123',
-        passwordConfirmation: '1234'
-      }
-    }
-    const httpResponse = await sut.handle(httpRequest)
-    expect(httpResponse).toEqual(badRequest(new InvalidParamError('passwords does not match')))
-  })
-  test('Should return 400 if an invalid email is provided', async () => {
-    const { sut, emailValidatorStub } = makeSut()
-    jest.spyOn(emailValidatorStub, 'isValid').mockReturnValue(false)
-
-    const httpResponse = await sut.handle(fakeRequest())
-    expect(httpResponse).toEqual(badRequest(new InvalidParamError('Email not valid')))
-  })
-  test('Should call EmailValidator with correct email', async () => {
-    const { sut, emailValidatorStub } = makeSut()
-    const isValidSpy = jest.spyOn(emailValidatorStub, 'isValid')
-    await sut.handle(fakeRequest())
-    expect(isValidSpy).toHaveBeenCalledWith('test@mail.com')
-  })
-  test('Should return 500 if EmailValidator throws', async () => {
-    const { sut, emailValidatorStub } = makeSut()
-    jest.spyOn(emailValidatorStub, 'isValid').mockImplementationOnce(() => {
-      throw new Error()
-    })
-
-    const httpResponse = await sut.handle(fakeRequest())
-    expect(httpResponse).toEqual(serverError(new ServerError('any')))
-  })
   test('Should call AddAccount with correct values', async () => {
     const { sut, addAccountStub } = makeSut()
     const addspy = jest.spyOn(addAccountStub, 'add')
@@ -167,5 +83,18 @@ describe('SignUp Controller', () => {
 
     const httpResponse = await sut.handle(fakeRequest())
     expect(httpResponse).toEqual(ok(fakeAccount()))
+  })
+  test('Should call Validation with correct values', async () => {
+    const { sut, validationStub } = makeSut()
+    const isValidSpy = jest.spyOn(validationStub, 'validate')
+    const httpRequest = fakeRequest()
+    await sut.handle(httpRequest)
+    expect(isValidSpy).toHaveBeenCalledWith(httpRequest.body)
+  })
+  test('Should return 400 if validator return a error', async () => {
+    const { sut, validationStub } = makeSut()
+    jest.spyOn(validationStub, 'validate').mockReturnValueOnce(new MissingParamError('any_value'))
+    const httpResponse = await sut.handle(fakeRequest())
+    expect(httpResponse).toEqual(badRequest(new MissingParamError('any_value')))
   })
 })
