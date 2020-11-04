@@ -25,8 +25,15 @@ describe('JWT adapter', () => {
   })
   test('should return a token on sign success', async () => {
     const { sut } = makeSut()
-
     const token = await sut.generate('any_id')
     expect(token).toBe('any_token')
+  })
+  test('should throw if sign throws ', async () => {
+    const { sut } = makeSut()
+    jest.spyOn(jwt, 'sign').mockImplementationOnce(() => {
+      throw new Error()
+    })
+    const result = sut.generate('any_id')
+    await expect(result).rejects.toThrow()
   })
 })
