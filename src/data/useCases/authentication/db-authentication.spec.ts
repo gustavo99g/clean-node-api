@@ -55,4 +55,10 @@ describe('Dbauthentication useCase', () => {
     const error = sut.auth(makeFakeAuth())
     await expect(error).rejects.toThrow()
   })
+  test('should return null if findByEmailRepo returns null', async () => {
+    const { sut, findByEmailRepoStub } = makeSut()
+    jest.spyOn(findByEmailRepoStub, 'find').mockReturnValueOnce(Promise.resolve(null))
+    const token = await sut.auth(makeFakeAuth())
+    expect(token).toBeNull()
+  })
 })
