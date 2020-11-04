@@ -1,5 +1,5 @@
 import { Authentication, AuthenticateModel } from '../../../domain/useCases/authentication'
-import { findByEmailRepo } from '../../protocols/find-by_email-repo'
+import { findByEmailRepo } from '../../protocols/db/find-by_email-repo'
 
 export class DbAuthentication implements Authentication {
   constructor (private readonly findByEmailRepo: findByEmailRepo) {}

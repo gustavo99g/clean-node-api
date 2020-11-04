@@ -1,5 +1,5 @@
 import { AccountModel } from '../../../domain/models/account'
-import { findByEmailRepo } from '../../protocols/find-by_email-repo'
+import { findByEmailRepo } from '../../protocols/db/find-by_email-repo'
 import { DbAuthentication } from './db-authentication'
 import { AuthenticateModel } from '../../../domain/useCases/authentication'
 
