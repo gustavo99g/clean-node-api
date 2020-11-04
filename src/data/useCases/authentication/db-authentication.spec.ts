@@ -136,4 +136,10 @@ describe('Dbauthentication useCase', () => {
     await sut.auth(makeFakeAuth())
     expect(compareSpy).toHaveBeenCalledWith('any_id', 'any_token')
   })
+  test('should throw if updateTokenrepo throws', async () => {
+    const { sut, updateTokenrepo } = makeSut()
+    jest.spyOn(updateTokenrepo, 'update').mockReturnValueOnce(Promise.reject(new Error()))
+    const error = sut.auth(makeFakeAuth())
+    await expect(error).rejects.toThrow()
+  })
 })
