@@ -24,7 +24,7 @@ const makeFakeAuth = (): AuthenticateModel => {
 
 const makefindByEmailRepo = (): findByEmailRepo => {
   class FindByEmailRepoStub implements findByEmailRepo {
-    async find (email: string): Promise<AccountModel> {
+    async findByEmail (email: string): Promise<AccountModel> {
       const account = makeFakeAccout()
       return Promise.resolve(account)
     }
@@ -58,7 +58,7 @@ const makeTokengenerate = (): TokenGenerate => {
 
 const makeUpdateTokenRepo = (): UpdateTokenRepo => {
   class UpdateTokenRepoStub implements UpdateTokenRepo {
-    async update (id: string, token: string): Promise<void> {
+    async updateAccessToken (id: string, token: string): Promise<void> {
       return Promise.resolve()
     }
   }
@@ -78,20 +78,20 @@ const makeSut = (): SutTypes => {
 describe('Dbauthentication useCase', () => {
   test('should call findByEmailRepo with correct email', async () => {
     const { sut, findByEmailRepoStub } = makeSut()
-    const loadSpy = jest.spyOn(findByEmailRepoStub, 'find')
+    const loadSpy = jest.spyOn(findByEmailRepoStub, 'findByEmail')
     await sut.auth(makeFakeAuth())
     expect(loadSpy).toHaveBeenCalledWith('any_email@mail.com')
   })
 
   test('should throw if findByEmailRepo throws', async () => {
     const { sut, findByEmailRepoStub } = makeSut()
-    jest.spyOn(findByEmailRepoStub, 'find').mockReturnValueOnce(Promise.reject(new Error()))
+    jest.spyOn(findByEmailRepoStub, 'findByEmail').mockReturnValueOnce(Promise.reject(new Error()))
     const error = sut.auth(makeFakeAuth())
     await expect(error).rejects.toThrow()
   })
   test('should return null if findByEmailRepo returns null', async () => {
     const { sut, findByEmailRepoStub } = makeSut()
-    jest.spyOn(findByEmailRepoStub, 'find').mockReturnValueOnce(Promise.resolve(null as unknown as AccountModel))
+    jest.spyOn(findByEmailRepoStub, 'findByEmail').mockReturnValueOnce(Promise.resolve(null as unknown as AccountModel))
     const token = await sut.auth(makeFakeAuth())
     expect(token).toBeNull()
   })
@@ -132,13 +132,13 @@ describe('Dbauthentication useCase', () => {
   })
   test('should call updateTokenrepo with corrects values', async () => {
     const { sut, updateTokenrepo } = makeSut()
-    const compareSpy = jest.spyOn(updateTokenrepo, 'update')
+    const compareSpy = jest.spyOn(updateTokenrepo, 'updateAccessToken')
     await sut.auth(makeFakeAuth())
     expect(compareSpy).toHaveBeenCalledWith('any_id', 'any_token')
   })
   test('should throw if updateTokenrepo throws', async () => {
     const { sut, updateTokenrepo } = makeSut()
-    jest.spyOn(updateTokenrepo, 'update').mockReturnValueOnce(Promise.reject(new Error()))
+    jest.spyOn(updateTokenrepo, 'updateAccessToken').mockReturnValueOnce(Promise.reject(new Error()))
     const error = sut.auth(makeFakeAuth())
     await expect(error).rejects.toThrow()
   })

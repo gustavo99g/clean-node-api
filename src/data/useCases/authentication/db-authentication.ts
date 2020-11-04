@@ -14,12 +14,12 @@ export class DbAuthentication implements Authentication {
 
   async auth (authModel: AuthenticateModel): Promise<any> {
     const { email, password } = authModel
-    const user = await this.findByEmailRepo.find(email)
+    const user = await this.findByEmailRepo.findByEmail(email)
     if (user) {
       const passMatch = await this.hashComparer.compare(password, user.password)
       if (passMatch) {
         const token = await this.tokenGenerate.generate(user.id)
-        await this.updateTokenRepo.update(user.id, token)
+        await this.updateTokenRepo.updateAccessToken(user.id, token)
         return token
       }
     }
