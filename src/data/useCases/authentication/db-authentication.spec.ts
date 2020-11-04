@@ -113,4 +113,9 @@ describe('Dbauthentication useCase', () => {
     const error = sut.auth(makeFakeAuth())
     await expect(error).rejects.toThrow()
   })
+  test('should return a token on success', async () => {
+    const { sut } = makeSut()
+    const token = await sut.auth(makeFakeAuth())
+    expect(token).toBe('any_token')
+  })
 })
