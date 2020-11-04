@@ -1,3 +1,3 @@
-export const throwError = (): never => {
+export const throwError = (): any => {
   throw new Error()
 }
