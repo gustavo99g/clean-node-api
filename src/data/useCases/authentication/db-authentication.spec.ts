@@ -3,6 +3,7 @@ import { findByEmailRepo } from '../../protocols/db/find-by_email-repo'
 import { DbAuthentication } from './db-authentication'
 import { AuthenticateModel } from '../../../domain/useCases/authentication'
 import { HashComparer } from '../../protocols/crypto/hash-comparer'
+import { TokenGenerate } from '../../protocols/crypto/token-generator'
 
 const makeFakeAccout = (): AccountModel => {
   return {
@@ -41,15 +42,25 @@ const makeHashComparer = (): HashComparer => {
 interface SutTypes {
   findByEmailRepoStub: findByEmailRepo
   hashComparerStub: HashComparer
+  tokenGenerateStub: TokenGenerate
   sut: DbAuthentication
+}
+const makeTokengenerate = (): TokenGenerate => {
+  class TokenGenerateStub implements TokenGenerate {
+    async generate (id: string): Promise<string> {
+      return Promise.resolve('any_token')
+    }
+  }
+  return new TokenGenerateStub()
 }
 
 const makeSut = (): SutTypes => {
   const findByEmailRepoStub = makefindByEmailRepo()
   const hashComparerStub = makeHashComparer()
-  const sut = new DbAuthentication(findByEmailRepoStub, hashComparerStub)
+  const tokenGenerateStub = makeTokengenerate()
+  const sut = new DbAuthentication(findByEmailRepoStub, hashComparerStub, tokenGenerateStub)
 
-  return { sut, findByEmailRepoStub, hashComparerStub }
+  return { sut, findByEmailRepoStub, hashComparerStub, tokenGenerateStub }
 }
 
 describe('Dbauthentication useCase', () => {
@@ -89,5 +100,11 @@ describe('Dbauthentication useCase', () => {
     jest.spyOn(hashComparerStub, 'compare').mockReturnValueOnce(Promise.resolve(false))
     const token = await sut.auth(makeFakeAuth())
     expect(token).toBeNull()
+  })
+  test('should call tokenGenerate with correct value', async () => {
+    const { sut, tokenGenerateStub } = makeSut()
+    const compareSpy = jest.spyOn(tokenGenerateStub, 'generate')
+    await sut.auth(makeFakeAuth())
+    expect(compareSpy).toHaveBeenCalledWith('any_id')
   })
 })
