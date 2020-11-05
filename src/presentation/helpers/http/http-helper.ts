@@ -22,6 +22,12 @@ export const unauthorized = (): HttpResponse => {
     body: new UnauthorizedError()
   }
 }
+export const noContent = (): HttpResponse => {
+  return {
+    statusCode: 204,
+    body: null
+  }
+}
 
 export const serverError = (err: Error): HttpResponse => {
   return {
