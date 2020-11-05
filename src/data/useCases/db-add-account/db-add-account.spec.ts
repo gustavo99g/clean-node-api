@@ -35,14 +35,8 @@ const makeAddAccountRepo = (): AddAccountRepo => {
 }
 const makefindByEmailRepo = (): findByEmailRepo => {
   class FindByEmailRepoStub implements findByEmailRepo {
-    async findByEmail (email: string): Promise<AccountModel> {
-      const account = {
-        id: 'any_id',
-        name: 'any_name',
-        email: 'any_email@mail.com',
-        password: 'hashed_password'
-      }
-      return Promise.resolve(account)
+    async findByEmail (email: string): Promise<AccountModel | null> {
+      return Promise.resolve(null)
     }
   }
   return new FindByEmailRepoStub()
@@ -78,6 +72,18 @@ describe('DbAddAccount use case', () => {
     const error = sut.add(makeFakeData())
     await expect(error).rejects.toThrow()
   })
+  test('should return null if findByEmail do not return null', async () => {
+    const { sut, findByEmailRepoStub } = makeSut()
+    jest.spyOn(findByEmailRepoStub, 'findByEmail').mockReturnValueOnce(Promise.resolve({
+      id: 'any_id',
+      name: 'any_name',
+      email: 'any_email@mail.com',
+      password: 'any_password'
+    }))
+    const res = await sut.add(makeFakeData())
+    expect(res).toBeNull()
+  })
+
   test('Should call hasher with correct password', async () => {
     const { sut, hasherSub } = makeSut()
     const hashSpy = jest.spyOn(hasherSub, 'Hash')

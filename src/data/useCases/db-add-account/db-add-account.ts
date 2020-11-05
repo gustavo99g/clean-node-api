@@ -11,8 +11,12 @@ export class DbAddAccount implements AddAccount {
     private readonly findByEmailRepo: findByEmailRepo
   ) {}
 
-  async add (accountData: AddAccountModel): Promise<AccountModel> {
-    await this.findByEmailRepo.findByEmail(accountData.email)
+  async add (accountData: AddAccountModel): Promise<AccountModel | null> {
+    const accountFound = await this.findByEmailRepo.findByEmail(accountData.email)
+
+    if (accountFound) {
+      return null
+    }
 
     const hashedPassword = await this.hasher.Hash(accountData.password)
 
