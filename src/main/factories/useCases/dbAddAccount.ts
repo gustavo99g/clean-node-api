@@ -6,6 +6,6 @@ import { AddAccount } from '../../../domain/useCases/add-account'
 export const makeDbAddAccout = (): AddAccount => {
   const bcrypt = new BcryptAdapter()
   const accountRepo = new AccountRepo()
-  const dbAddAccount = new DbAddAccount(bcrypt, accountRepo)
+  const dbAddAccount = new DbAddAccount(bcrypt, accountRepo, accountRepo)
   return dbAddAccount
 }
