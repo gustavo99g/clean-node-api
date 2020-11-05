@@ -34,13 +34,13 @@ const makeFakeData = (): AddSurveyModel => {
 }
 
 describe('DbAddSurvey useCase', () => {
-  test('should call DbAddRepo with correct values', async () => {
+  test('should call AddSurveyRepo with correct values', async () => {
     const { sut, addSurveyStub } = makeSut()
     const addSpy = jest.spyOn(addSurveyStub, 'add')
     await sut.add(makeFakeData())
     expect(addSpy).toHaveBeenCalledWith(makeFakeData())
   })
-  test('should throw if DbAddRepo throws', async () => {
+  test('should throw if AddSurveyRepo throws', async () => {
     const { sut, addSurveyStub } = makeSut()
     jest.spyOn(addSurveyStub, 'add').mockReturnValueOnce(Promise.reject(new Error()))
     const error = sut.add(makeFakeData())
