@@ -1,5 +1,5 @@
 import { Controller } from '../../../presentation/protocols/controller'
-import { LoginController } from '../../../presentation/controllers/login/login'
+import { LoginController } from '../../../presentation/controllers/auth/login/login'
 import { makeLoginValidator } from './login-validation'
 
 import { LogMongoRepo } from '../../../infra/db/mongodb/logRepo/log'

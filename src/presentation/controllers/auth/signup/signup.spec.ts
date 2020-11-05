@@ -1,13 +1,13 @@
 import { SignUpController } from './signup'
-import { MissingParamError } from '../../errors/missing-param-error'
-import { ServerError } from '../../errors/server-error'
-import { EmailInUseError } from '../../errors/emailInUserError'
-import { AddAccount, AddAccountModel } from '../../../domain/useCases/add-account'
-import { AccountModel } from '../../../domain/models/account'
-import { HttpRequest } from '../../protocols/http'
-import { ok, badRequest, serverError, forbidden } from '../../helpers/http/http-helper'
-import { Validation } from '../../protocols/validation'
-import { Authentication, AuthenticateModel } from '../../../domain/useCases/authentication'
+import { MissingParamError } from '../../../errors/missing-param-error'
+import { ServerError } from '../../../errors/server-error'
+import { EmailInUseError } from '../../../errors/emailInUserError'
+import { AddAccount, AddAccountModel } from '../../../../domain/useCases/add-account'
+import { AccountModel } from '../../../../domain/models/account'
+import { HttpRequest } from '../../../protocols/http'
+import { ok, badRequest, serverError, forbidden } from '../../../helpers/http/http-helper'
+import { Validation } from '../../../protocols/validation'
+import { Authentication, AuthenticateModel } from '../../../../domain/useCases/authentication'
 
 interface SubTypes {
   sut: SignUpController
