@@ -4,7 +4,7 @@ import { ServerError } from '../../errors/server-error'
 import { AddAccount, AddAccountModel } from '../../../domain/useCases/add-account'
 import { AccountModel } from '../../../domain/models/account'
 import { HttpRequest } from '../../protocols/http'
-import { ok, badRequest } from '../../helpers/http/http-helper'
+import { ok, badRequest, serverError } from '../../helpers/http/http-helper'
 import { Validation } from '../../protocols/validation'
 import { Authentication, AuthenticateModel } from '../../../domain/useCases/authentication'
 
@@ -113,5 +113,14 @@ describe('SignUp Controller', () => {
     const authSpy = jest.spyOn(authStub, 'auth')
     await sut.handle(fakeRequest())
     expect(authSpy).toHaveBeenCalledWith({ email: 'test@mail.com', password: '123' })
+  })
+  test('should returns 500 if auth throws', async () => {
+    const { sut, authStub } = makeSut()
+    jest.spyOn(authStub, 'auth').mockImplementationOnce(() => {
+      throw new Error()
+    })
+
+    const httpResponse = await sut.handle(fakeRequest())
+    expect(httpResponse).toEqual(serverError(new Error()))
   })
 })
