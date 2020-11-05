@@ -37,10 +37,12 @@ const makeSut = (): SutTypes => {
 const makeFakeRequest = (): HttpRequest => {
   return {
     body: {
-      question: 'any_question',
-      answers: {
-        image: 'any_image',
-        answer: 'any_answer'
+      survey: {
+        question: 'any_question',
+        answers: [{
+          image: 'any_image',
+          answer: 'any_answer'
+        }]
       }
     }
   }
@@ -66,7 +68,7 @@ describe('AddSurvey controller', () => {
     const addSurveySpy = jest.spyOn(addSurveyStub, 'add')
     const httpRequest = makeFakeRequest()
     await sut.handle(httpRequest)
-    expect(addSurveySpy).toHaveBeenCalledWith(httpRequest.body.answer)
+    expect(addSurveySpy).toHaveBeenCalledWith(httpRequest.body.survey)
   })
   test('should return 500 if addSurvey fails', async () => {
     const { sut, validationStub } = makeSut()
