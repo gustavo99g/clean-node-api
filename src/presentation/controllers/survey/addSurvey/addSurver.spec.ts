@@ -1,7 +1,7 @@
 import { AddSurveyController } from './addSurvey'
 import { HttpRequest } from '../../../protocols/http'
 import { Validation } from '../../../protocols/validation'
-import { badRequest } from '../../../helpers/http/http-helper'
+import { badRequest, serverError } from '../../../helpers/http/http-helper'
 import { AddSurvey, AddSurveyModel } from '../../../../domain/useCases/add-survey'
 
 interface SutTypes {
@@ -67,5 +67,15 @@ describe('AddSurvey controller', () => {
     const httpRequest = makeFakeRequest()
     await sut.handle(httpRequest)
     expect(addSurveySpy).toHaveBeenCalledWith(httpRequest.body.answer)
+  })
+  test('should return 500 if addSurvey fails', async () => {
+    const { sut, validationStub } = makeSut()
+    jest.spyOn(validationStub, 'validate').mockImplementationOnce(() => {
+      throw new Error()
+    })
+
+    const httpRequest = makeFakeRequest()
+    const res = await sut.handle(httpRequest)
+    expect(res).toEqual(serverError(new Error()))
   })
 })
