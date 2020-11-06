@@ -14,7 +14,11 @@ export class DbFindByAccessToken implements FindByAccessToken {
     if (!isValid) {
       return null
     }
-    await this.findByAccessTokenRepo.find(token)
+    const account = await this.findByAccessTokenRepo.find(token)
+
+    if (!account) {
+      return null
+    }
     return {
       id: 'any_id',
       name: 'any_name',
