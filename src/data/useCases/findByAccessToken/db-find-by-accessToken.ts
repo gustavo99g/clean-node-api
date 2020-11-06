@@ -19,11 +19,6 @@ export class DbFindByAccessToken implements FindByAccessToken {
     if (!account) {
       return null
     }
-    return {
-      id: 'any_id',
-      name: 'any_name',
-      email: 'any_email',
-      password: 'any_password'
-    }
+    return account
   }
 }
