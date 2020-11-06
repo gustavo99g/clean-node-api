@@ -52,4 +52,10 @@ describe('find By email Use Case', () => {
     const res = await sut.find('any_token')
     expect(res).toBeNull()
   })
+  test('should throw if decrypter throws', async () => {
+    const { sut, descrypterStub } = makeSut()
+    jest.spyOn(descrypterStub, 'decrypt').mockReturnValueOnce(Promise.reject(new Error()))
+    const res = sut.find('any_token')
+    await expect(res).rejects.toThrow()
+  })
 })
