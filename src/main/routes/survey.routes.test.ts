@@ -16,7 +16,7 @@ describe('SURVEY ROUTES', () => {
     surveyCollections = await MongoHelper.getCollection('survey')
     await surveyCollections.deleteMany({})
   })
-  test('should return 204 on success', async () => {
+  test('should return 403 if user is not admin', async () => {
     await request(app)
       .post('/api/survey')
       .send({
@@ -31,6 +31,6 @@ describe('SURVEY ROUTES', () => {
         }
         ]
       })
-      .expect(204)
+      .expect(403)
   })
 })
