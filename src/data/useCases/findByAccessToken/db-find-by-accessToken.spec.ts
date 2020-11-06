@@ -5,7 +5,7 @@ import { Decrypter } from '../../protocols/crypto/token-decrypter'
 
 const makeDecrypter = (): Decrypter => {
   class DecrypterStub implements Decrypter {
-    async decrypt (token: string): Promise<string> {
+    async decrypt (token: string): Promise<string | null> {
       return Promise.resolve('any_id')
     }
   }
@@ -45,5 +45,11 @@ describe('find By email Use Case', () => {
     const decryptSpy = jest.spyOn(descrypterStub, 'decrypt')
     await sut.find('any_token')
     expect(decryptSpy).toHaveBeenCalledWith('any_token')
+  })
+  test('should return null if decrypter returns null', async () => {
+    const { sut, descrypterStub } = makeSut()
+    jest.spyOn(descrypterStub, 'decrypt').mockReturnValueOnce(Promise.resolve(null))
+    const res = await sut.find('any_token')
+    expect(res).toBeNull()
   })
 })
