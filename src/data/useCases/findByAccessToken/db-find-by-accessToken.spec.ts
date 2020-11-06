@@ -12,15 +12,19 @@ const makeDecrypter = (): Decrypter => {
   return new DecrypterStub()
 }
 
+const makeFakeAccount = (): AccountModel => {
+  return {
+    id: 'any_id',
+    name: 'any_name',
+    email: 'any_email',
+    password: 'any_password'
+  }
+}
+
 const makefindAccessTokenRepo = (): findByAccessTokenRepo => {
   class FindByAccessTokenStub implements findByAccessTokenRepo {
     async find (token: string, role?: string): Promise<AccountModel | null> {
-      return Promise.resolve({
-        id: 'any_id',
-        name: 'any_name',
-        email: 'any_email',
-        password: 'any_password'
-      })
+      return Promise.resolve(makeFakeAccount())
     }
   }
   return new FindByAccessTokenStub()
@@ -63,5 +67,17 @@ describe('find By email Use Case', () => {
     const findSpy = jest.spyOn(findByAccessTokenStub, 'find')
     await sut.find('any_token')
     expect(findSpy).toHaveBeenCalledWith('any_token')
+  })
+  test('should return null if findByAccessToken returns null', async () => {
+    const { sut, findByAccessTokenStub } = makeSut()
+    jest.spyOn(findByAccessTokenStub, 'find').mockReturnValueOnce(Promise.resolve(null))
+    const res = await sut.find('any_token')
+    expect(res).toBeNull()
+  })
+  test('should return an account on findByAccessToken succeeds', async () => {
+    const { sut } = makeSut()
+
+    const res = await sut.find('any_token')
+    expect(res).toEqual(makeFakeAccount())
   })
 })
