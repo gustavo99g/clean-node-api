@@ -5,7 +5,7 @@ import { AccessDeniedError } from '../errors/access-denied-error'
 import { findByAccessTokenRepo } from '../../data/protocols/db/find-by-access-token-repo'
 
 export class AuthMiddleware implements Middleware {
-  constructor (private readonly findByAccesTokenRepo: findByAccessTokenRepo) {}
+  constructor (private readonly dbFindByAccesToken: findByAccessTokenRepo, private readonly role?: string) {}
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
     try {
       const accessToken = httpRequest.headers?.['x-access-token']
@@ -13,7 +13,7 @@ export class AuthMiddleware implements Middleware {
       if (!accessToken) {
         return forbidden(new AccessDeniedError())
       }
-      const account = await this.findByAccesTokenRepo.find(accessToken)
+      const account = await this.dbFindByAccesToken.find(accessToken, this.role)
 
       if (!account) {
         return forbidden(new AccessDeniedError())

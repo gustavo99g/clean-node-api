@@ -32,10 +32,10 @@ const makeFakeRequest = (): HttpRequest => {
   }
 }
 
-const makeSut = (): SutTypes => {
+const makeSut = (role?: string): SutTypes => {
   const findByAccessTokenStub = makeFindByAccessToken()
 
-  const sut = new AuthMiddleware(findByAccessTokenStub)
+  const sut = new AuthMiddleware(findByAccessTokenStub, role)
 
   return { sut, findByAccessTokenStub }
 }
@@ -47,10 +47,10 @@ describe('Auth Middleware', () => {
     expect(res).toEqual(forbidden(new AccessDeniedError()))
   })
   test('should call findByAccessToken with correct token', async () => {
-    const { sut, findByAccessTokenStub } = makeSut()
+    const { sut, findByAccessTokenStub } = makeSut('any_role')
     const findSpy = jest.spyOn(findByAccessTokenStub, 'find')
     await sut.handle(makeFakeRequest())
-    expect(findSpy).toHaveBeenCalledWith('any_token')
+    expect(findSpy).toHaveBeenCalledWith('any_token', 'any_role')
   })
   test('should return 403 if findByAccessToken returns null', async () => {
     const { sut, findByAccessTokenStub } = makeSut()
