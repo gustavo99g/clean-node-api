@@ -58,11 +58,31 @@ describe('Account mongo repository', () => {
     expect(account).toBeTruthy()
     expect(account.accessToken).toBe('any_token')
   })
-  test('should return an account on findByAccessToken success', async () => {
+  test('should return an account on findByAccessToken success without role', async () => {
     const sut = new AccountRepo()
-    const res = await accountCollections.insertOne(makeFakeAccount())
-    await accountCollections.updateOne({ _id: res.ops[0]._id }, { $set: { accessToken: 'any_token' } })
+    await accountCollections.insertOne({
+      name: 'any_name',
+      email: 'any_email@email.com',
+      password: 'any_password',
+      accessToken: 'any_token'
+    })
     const account = await sut.findByAccessToken('any_token')
+    expect(account).toBeTruthy()
+    expect(account?.id).toBeTruthy()
+    expect(account?.name).toBe('any_name')
+    expect(account?.email).toBe('any_email@email.com')
+    expect(account?.password).toBe('any_password')
+  })
+  test('should return an account on findByAccessToken success without role', async () => {
+    const sut = new AccountRepo()
+    await accountCollections.insertOne({
+      name: 'any_name',
+      email: 'any_email@email.com',
+      password: 'any_password',
+      accessToken: 'any_token',
+      role: 'any_role'
+    })
+    const account = await sut.findByAccessToken('any_token', 'any_role')
     expect(account).toBeTruthy()
     expect(account?.id).toBeTruthy()
     expect(account?.name).toBe('any_name')
