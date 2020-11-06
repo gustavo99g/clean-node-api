@@ -1,6 +1,6 @@
 import { AuthMiddleware } from './auth-middleware'
 import { AccessDeniedError } from '../errors/access-denied-error'
-import { forbidden, ok } from '../helpers/http/http-helper'
+import { forbidden, ok, serverError } from '../helpers/http/http-helper'
 import { findByAccessTokenRepo } from '../../data/protocols/db/find-by-access-token-repo'
 import { AccountModel } from '../../domain/models/account'
 import { HttpRequest } from '../protocols/http'
@@ -60,8 +60,13 @@ describe('Auth Middleware', () => {
   })
   test('should return 200 if findByAccessToken returns an account', async () => {
     const { sut } = makeSut()
-
     const res = await sut.handle(makeFakeRequest())
     expect(res).toEqual(ok({ accountId: 'any_id' }))
+  })
+  test('should return 500 if findByAccessToken throws', async () => {
+    const { sut, findByAccessTokenStub } = makeSut()
+    jest.spyOn(findByAccessTokenStub, 'find').mockReturnValueOnce(Promise.reject(serverError(new Error())))
+    const res = await sut.handle(makeFakeRequest())
+    expect(res).toEqual(serverError(new Error()))
   })
 })
