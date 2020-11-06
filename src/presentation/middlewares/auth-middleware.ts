@@ -12,7 +12,11 @@ export class AuthMiddleware implements Middleware {
     if (!accessToken) {
       return forbidden(new AccessDeniedError())
     }
-    await this.findByAccesTokenRepo.find(accessToken)
+    const account = await this.findByAccesTokenRepo.find(accessToken)
+
+    if (!account) {
+      return forbidden(new AccessDeniedError())
+    }
 
     return Promise.resolve(ok('ok'))
   }
