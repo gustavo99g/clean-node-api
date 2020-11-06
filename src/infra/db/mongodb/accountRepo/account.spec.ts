@@ -69,4 +69,9 @@ describe('Account mongo repository', () => {
     expect(account?.email).toBe('any_email@email.com')
     expect(account?.password).toBe('any_password')
   })
+  test('should return null if findByAccessToken dont find an account', async () => {
+    const sut = new AccountRepo()
+    const account = await sut.findByAccessToken('any_token')
+    expect(account).toBeNull()
+  })
 })
