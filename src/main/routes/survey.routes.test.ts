@@ -16,7 +16,7 @@ describe('SURVEY ROUTES', () => {
     surveyCollections = await MongoHelper.getCollection('survey')
     await surveyCollections.deleteMany({})
   })
-  test('should return 403 if user is not admin', async () => {
+  test('should return 403 if user without access token', async () => {
     await request(app)
       .post('/api/survey')
       .send({
