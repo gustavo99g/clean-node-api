@@ -9,12 +9,12 @@ export class DbFindByAccessToken implements FindByAccessToken {
     private readonly findByAccessTokenRepo: findByAccessTokenRepo
   ) {}
 
-  async find (token: string, role?: string): Promise<AccountModel | null> {
+  async findByAccessToken (token: string, role?: string): Promise<AccountModel | null> {
     const isValid = await this.decrypter.decrypt(token)
     if (!isValid) {
       return null
     }
-    const account = await this.findByAccessTokenRepo.find(token, role)
+    const account = await this.findByAccessTokenRepo.findByAccessToken(token, role)
 
     if (!account) {
       return null

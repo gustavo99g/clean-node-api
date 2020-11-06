@@ -13,7 +13,7 @@ export class AuthMiddleware implements Middleware {
       if (!accessToken) {
         return forbidden(new AccessDeniedError())
       }
-      const account = await this.dbFindByAccesToken.find(accessToken, this.role)
+      const account = await this.dbFindByAccesToken.findByAccessToken(accessToken, this.role)
 
       if (!account) {
         return forbidden(new AccessDeniedError())

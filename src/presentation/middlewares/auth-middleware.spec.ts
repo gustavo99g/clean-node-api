@@ -7,7 +7,7 @@ import { HttpRequest } from '../protocols/http'
 
 const makeFindByAccessToken = (): findByAccessTokenRepo => {
   class FindByAccessTokenStub implements findByAccessTokenRepo {
-    async find (token: string): Promise<AccountModel | null> {
+    async findByAccessToken (token: string): Promise<AccountModel | null> {
       return Promise.resolve({
         id: 'any_id',
         email: 'any_email',
@@ -48,13 +48,13 @@ describe('Auth Middleware', () => {
   })
   test('should call findByAccessToken with correct token', async () => {
     const { sut, findByAccessTokenStub } = makeSut('any_role')
-    const findSpy = jest.spyOn(findByAccessTokenStub, 'find')
+    const findSpy = jest.spyOn(findByAccessTokenStub, 'findByAccessToken')
     await sut.handle(makeFakeRequest())
     expect(findSpy).toHaveBeenCalledWith('any_token', 'any_role')
   })
   test('should return 403 if findByAccessToken returns null', async () => {
     const { sut, findByAccessTokenStub } = makeSut()
-    jest.spyOn(findByAccessTokenStub, 'find').mockReturnValueOnce(Promise.resolve(null))
+    jest.spyOn(findByAccessTokenStub, 'findByAccessToken').mockReturnValueOnce(Promise.resolve(null))
     const res = await sut.handle(makeFakeRequest())
     expect(res).toEqual(forbidden(new AccessDeniedError()))
   })
@@ -65,7 +65,7 @@ describe('Auth Middleware', () => {
   })
   test('should return 500 if findByAccessToken throws', async () => {
     const { sut, findByAccessTokenStub } = makeSut()
-    jest.spyOn(findByAccessTokenStub, 'find').mockReturnValueOnce(Promise.reject(serverError(new Error())))
+    jest.spyOn(findByAccessTokenStub, 'findByAccessToken').mockReturnValueOnce(Promise.reject(serverError(new Error())))
     const res = await sut.handle(makeFakeRequest())
     expect(res).toEqual(serverError(new Error()))
   })

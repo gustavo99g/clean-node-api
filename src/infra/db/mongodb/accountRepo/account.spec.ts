@@ -46,7 +46,6 @@ describe('Account mongo repository', () => {
   })
   test('should return null if findByEmail dont find a account', async () => {
     const sut = new AccountRepo()
-
     const account = await sut.findByEmail('invalid_email@email.com')
     expect(account).toBeNull()
   })
@@ -58,5 +57,16 @@ describe('Account mongo repository', () => {
     const account = await accountCollections.findOne({ _id: res.ops[0]._id })
     expect(account).toBeTruthy()
     expect(account.accessToken).toBe('any_token')
+  })
+  test('should return an account on findByAccessToken success', async () => {
+    const sut = new AccountRepo()
+    const res = await accountCollections.insertOne(makeFakeAccount())
+    await accountCollections.updateOne({ _id: res.ops[0]._id }, { $set: { accessToken: 'any_token' } })
+    const account = await sut.findByAccessToken('any_token')
+    expect(account).toBeTruthy()
+    expect(account?.id).toBeTruthy()
+    expect(account?.name).toBe('any_name')
+    expect(account?.email).toBe('any_email@email.com')
+    expect(account?.password).toBe('any_password')
   })
 })
