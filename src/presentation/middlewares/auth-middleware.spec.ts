@@ -3,6 +3,7 @@ import { AccessDeniedError } from '../errors/access-denied-error'
 import { forbidden } from '../helpers/http/http-helper'
 import { findByAccessTokenRepo } from '../../data/protocols/db/find-by-access-token-repo'
 import { AccountModel } from '../../domain/models/account'
+import { HttpRequest } from '../protocols/http'
 
 const makeFindByAccessToken = (): findByAccessTokenRepo => {
   class FindByAccessTokenStub implements findByAccessTokenRepo {
@@ -23,6 +24,14 @@ interface SutTypes {
   findByAccessTokenStub: findByAccessTokenRepo
 }
 
+const makeFakeRequest = (): HttpRequest => {
+  return {
+    headers: {
+      'x-access-token': 'any_token'
+    }
+  }
+}
+
 const makeSut = (): SutTypes => {
   const findByAccessTokenStub = makeFindByAccessToken()
 
@@ -40,11 +49,7 @@ describe('Auth Middleware', () => {
   test('should call findByAccessToken with correct token', async () => {
     const { sut, findByAccessTokenStub } = makeSut()
     const findSpy = jest.spyOn(findByAccessTokenStub, 'find')
-    await sut.handle({
-      headers: {
-        'x-access-token': 'any_token'
-      }
-    })
+    await sut.handle(makeFakeRequest())
     expect(findSpy).toHaveBeenCalledWith('any_token')
   })
 })
