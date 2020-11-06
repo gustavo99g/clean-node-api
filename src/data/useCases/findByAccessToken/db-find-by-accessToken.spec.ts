@@ -65,19 +65,19 @@ describe('find By email Use Case', () => {
   test('should call findByAccessToken with correct value', async () => {
     const { sut, findByAccessTokenStub } = makeSut()
     const findSpy = jest.spyOn(findByAccessTokenStub, 'find')
-    await sut.find('any_token')
-    expect(findSpy).toHaveBeenCalledWith('any_token')
+    await sut.find('any_token', 'any_role')
+    expect(findSpy).toHaveBeenCalledWith('any_token', 'any_role')
   })
   test('should return null if findByAccessToken returns null', async () => {
     const { sut, findByAccessTokenStub } = makeSut()
     jest.spyOn(findByAccessTokenStub, 'find').mockReturnValueOnce(Promise.resolve(null))
-    const res = await sut.find('any_token')
+    const res = await sut.find('any_token', 'any_role')
     expect(res).toBeNull()
   })
   test('should return an account on findByAccessToken succeeds', async () => {
     const { sut } = makeSut()
 
-    const res = await sut.find('any_token')
+    const res = await sut.find('any_token', 'any_role')
     expect(res).toEqual(makeFakeAccount())
   })
 })
