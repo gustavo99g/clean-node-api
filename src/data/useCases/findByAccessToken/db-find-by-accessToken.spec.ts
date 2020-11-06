@@ -35,7 +35,7 @@ interface SutTypes {
 const makeSut = (): SutTypes => {
   const descrypterStub = makeDecrypter()
   const findByAccessTokenStub = makefindAccessTokenRepo()
-  const sut = new DbFindByAccessToken(descrypterStub)
+  const sut = new DbFindByAccessToken(descrypterStub, findByAccessTokenStub)
   return { sut, findByAccessTokenStub, descrypterStub }
 }
 
@@ -57,5 +57,11 @@ describe('find By email Use Case', () => {
     jest.spyOn(descrypterStub, 'decrypt').mockReturnValueOnce(Promise.reject(new Error()))
     const res = sut.find('any_token')
     await expect(res).rejects.toThrow()
+  })
+  test('should call findByAccessToken with correct value', async () => {
+    const { sut, findByAccessTokenStub } = makeSut()
+    const findSpy = jest.spyOn(findByAccessTokenStub, 'find')
+    await sut.find('any_token')
+    expect(findSpy).toHaveBeenCalledWith('any_token')
   })
 })
