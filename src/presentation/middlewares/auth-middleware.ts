@@ -18,6 +18,6 @@ export class AuthMiddleware implements Middleware {
       return forbidden(new AccessDeniedError())
     }
 
-    return Promise.resolve(ok('ok'))
+    return Promise.resolve(ok(account.id))
   }
 }
