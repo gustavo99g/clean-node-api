@@ -19,6 +19,7 @@ export class AddSurveyController implements Controller {
       const { question, answer } = httpRequest.body
       const survey: AddSurveyModel = { question, answer }
       await this.addSurvey.add(survey)
+
       return noContent()
     } catch (err) {
       return serverError(err)
