@@ -1,7 +1,7 @@
 import { SurveyModel } from '../../../../domain/models/survey'
 import { ListSurveysController } from './listSurvey'
 import { ListSurveys } from '../../../../domain/useCases/list-survey'
-import { ok } from '../../../helpers/http/http-helper'
+import { ok, serverError } from '../../../helpers/http/http-helper'
 
 const makeFakeSurveys = (): SurveyModel[] => {
   const surveys = [{
@@ -52,8 +52,16 @@ describe('List surveys', () => {
   })
   test('should return a list of surveys on success', async () => {
     const { sut } = makeSut()
-
     const result = await sut.handle({})
     expect(result).toEqual(ok(makeFakeSurveys()))
+  })
+  test('should return 500 if listSurvey fails', async () => {
+    const { sut, listSurveyStub } = makeSut()
+    jest.spyOn(listSurveyStub, 'list').mockImplementationOnce(() => {
+      throw new Error()
+    })
+
+    const res = await sut.handle({})
+    expect(res).toEqual(serverError(new Error()))
   })
 })
