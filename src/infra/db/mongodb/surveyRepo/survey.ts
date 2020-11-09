@@ -3,8 +3,9 @@ import { AddSurveyModel } from '../../../../domain/useCases/add-survey'
 import { MongoHelper } from '../helpers/mongo-helper'
 import { listSurveysRepo } from '../../../../data/protocols/db/list-survey-repo'
 import { SurveyModel } from '../../../../domain/models/survey'
+import { FindByIdSurveyRepo } from '../../../../data/protocols/db/find-by-id-survey'
 
-export class SurveyRepo implements AddSurveyRepo, listSurveysRepo {
+export class SurveyRepo implements AddSurveyRepo, listSurveysRepo, FindByIdSurveyRepo {
   async add (survey: AddSurveyModel): Promise<void> {
     const surveyCollections = await MongoHelper.getCollection('surveys')
     await surveyCollections.insertOne(survey)
@@ -16,5 +17,11 @@ export class SurveyRepo implements AddSurveyRepo, listSurveysRepo {
 
     const surveys = results.map(result => MongoHelper.map(result))
     return surveys
+  }
+
+  async findById (id: string): Promise<SurveyModel> {
+    const surveyCollections = await MongoHelper.getCollection('surveys')
+    const result = await surveyCollections.findOne({ _id: id })
+    return MongoHelper.map(result)
   }
 }
