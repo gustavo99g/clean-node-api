@@ -12,7 +12,8 @@ const makeFakeSurveys = (): SurveyModel[] => {
         image: 'any_image',
         answer: 'any_answer'
       }
-    ]
+    ],
+    date: new Date()
   },
   {
     id: 'any_id',
@@ -22,7 +23,8 @@ const makeFakeSurveys = (): SurveyModel[] => {
         image: 'any_image',
         answer: 'any_answer'
       }
-    ]
+    ],
+    date: new Date()
   }
   ]
   return surveys
@@ -37,7 +39,12 @@ const makeListSurveys = (): ListSurveys => {
   return new ListSurveysStub()
 }
 
-const makeSut = (): any => {
+interface SutTypes {
+  listSurveyStub: ListSurveys
+  sut: ListSurveysController
+}
+
+const makeSut = (): SutTypes => {
   const listSurveyStub = makeListSurveys()
   const sut = new ListSurveysController(listSurveyStub)
   return { sut, listSurveyStub }
