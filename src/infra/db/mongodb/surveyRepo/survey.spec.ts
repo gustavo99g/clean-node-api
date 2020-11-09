@@ -45,4 +45,11 @@ describe('Survey Repo', () => {
     const surveys = await sut.list()
     expect(surveys.length).toBe(0)
   })
+  test('should find a survey by Id on success', async () => {
+    const sut = new SurveyRepo()
+    const result = await surveyCollections.insertOne(makeFakeData())
+    const id = result.ops[0]._id
+    const surveys = await sut.findById(id)
+    expect(surveys).toBeTruthy()
+  })
 })
