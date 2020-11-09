@@ -33,4 +33,16 @@ describe('Survey Repo', () => {
     const count = await surveyCollections.countDocuments()
     expect(count).toBe(1)
   })
+  test('should return all the surveys in DB', async () => {
+    const sut = new SurveyRepo()
+    await sut.add(makeFakeData())
+    await sut.add(makeFakeData())
+    const surveys = await sut.list()
+    expect(surveys.length).toBe(2)
+  })
+  test('should return a empty array of theres no data in DB', async () => {
+    const sut = new SurveyRepo()
+    const surveys = await sut.list()
+    expect(surveys.length).toBe(0)
+  })
 })
