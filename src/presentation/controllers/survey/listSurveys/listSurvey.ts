@@ -6,7 +6,7 @@ import { ListSurveys } from '../../../../domain/useCases/list-survey'
 export class ListSurveysController implements Controller {
   constructor (private readonly listSurveys: ListSurveys) {}
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
-    await this.listSurveys.list()
-    return Promise.resolve(ok('surveys'))
+    const surveys = await this.listSurveys.list()
+    return Promise.resolve(ok(surveys))
   }
 }
