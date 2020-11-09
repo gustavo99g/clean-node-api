@@ -57,8 +57,13 @@ describe('DbListSurvey', () => {
   })
   test('should return a list of surveys on success', async () => {
     const { sut } = makeSut()
-
     const result = await sut.list()
     expect(result).toEqual(makeFakeSurveys())
+  })
+  test('should throw if listSurvey throws', async () => {
+    const { sut, listSurveyRepoStub } = makeSut()
+    jest.spyOn(listSurveyRepoStub, 'list').mockReturnValueOnce(Promise.reject(new Error()))
+    const res = sut.list()
+    await expect(res).rejects.toThrow()
   })
 })
