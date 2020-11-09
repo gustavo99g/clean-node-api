@@ -55,4 +55,10 @@ describe('DbListSurvey', () => {
     await sut.list()
     expect(listSpy).toHaveBeenCalled()
   })
+  test('should return a list of surveys on success', async () => {
+    const { sut } = makeSut()
+
+    const result = await sut.list()
+    expect(result).toEqual(makeFakeSurveys())
+  })
 })
