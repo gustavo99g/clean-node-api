@@ -33,7 +33,7 @@ export class AccountRepo implements AddAccountRepo, findByEmailRepo, UpdateToken
 
   async findByAccessToken (token: string, role?: string): Promise<AccountModel | null> {
     const accountColletion = await MongoHelper.getCollection('accounts')
-    const result = await accountColletion.findOne({ accessToken: token, role })
+    const result = await accountColletion.findOne({ accessToken: token, $or: [{ role }, { role: 'admin' }] })
     if (!result) {
       return null
     }
