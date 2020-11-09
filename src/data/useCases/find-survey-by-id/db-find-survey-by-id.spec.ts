@@ -43,4 +43,9 @@ describe('Db find by id survey', () => {
     await sut.findById('any_id')
     expect(findSpy).toHaveBeenCalledWith('any_id')
   })
+  test('should return a survey on success', async () => {
+    const { sut } = makeSut()
+    const result = await sut.findById('any_id')
+    expect(result).toEqual(makeSurveyData())
+  })
 })
