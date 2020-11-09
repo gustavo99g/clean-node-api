@@ -1,6 +1,7 @@
 import { SurveyModel } from '../../../../domain/models/survey'
 import { ListSurveysController } from './listSurvey'
 import { ListSurveys } from '../../../../domain/useCases/list-survey'
+import { ok } from '../../../helpers/http/http-helper'
 
 const makeFakeSurveys = (): SurveyModel[] => {
   const surveys = [{
@@ -48,5 +49,11 @@ describe('List surveys', () => {
     const listSpy = jest.spyOn(listSurveyStub, 'list')
     await sut.handle({})
     expect(listSpy).toHaveBeenCalled()
+  })
+  test('should return a list of surveys on success', async () => {
+    const { sut } = makeSut()
+
+    const result = await sut.handle({})
+    expect(result).toEqual(ok(makeFakeSurveys()))
   })
 })
