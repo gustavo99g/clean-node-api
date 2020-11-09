@@ -1,6 +1,5 @@
-
-import { SurveyResultModel } from '../models/survey-result'
+import { SurveyModel } from '../models/survey'
 
 export interface FindSurveyByID {
-  findById(id: string): Promise<SurveyResultModel>
+  findById(id: string): Promise<SurveyModel>
 }
