@@ -8,21 +8,14 @@ let surveyCollections: Collection
 let surveyResultCollections: Collection
 let accountCollections: Collection
 
-/* const makeSurveyResult = (): SaveSurveyResultModel => {
-  return {
-    accountId: 'any_accountId',
-    surveyId: 'any_surveyId',
-    answer: 'any_answer',
-    date: new Date()
-  }
-} */
 const makeSurvey = async (): Promise<SurveyModel> => {
   const res = await surveyCollections.insertOne({
     question: 'any_question',
     answers: [{
       image: 'any_image',
       answer: 'any_answer'
-    }],
+    }, { answer: 'any_answer' }
+    ],
     date: new Date()
   })
 
@@ -67,5 +60,25 @@ describe('Survey Result Repo', () => {
 
     expect(surveyResult).toBeTruthy()
     expect(surveyResult.id).toBeTruthy()
+  })
+  test('should update a survey result if its not new ', async () => {
+    const sut = new SurveyResultRepo()
+    const survey = await makeSurvey()
+    const account = await makeAccount()
+    const res = await surveyResultCollections.insertOne({
+      surveyId: survey.id,
+      accountId: account.id,
+      answer: survey.answers[0].answer,
+      date: new Date()
+    })
+    const surveyResult = await sut.save({
+      surveyId: survey.id,
+      accountId: account.id,
+      answer: survey.answers[1].answer,
+      date: new Date()
+    })
+
+    expect(surveyResult).toBeTruthy()
+    expect(surveyResult.id).toEqual(res.ops[0]._id)
   })
 })
