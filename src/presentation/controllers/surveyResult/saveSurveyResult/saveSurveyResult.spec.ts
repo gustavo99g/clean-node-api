@@ -37,12 +37,12 @@ const makeFindByIdSurvey = (): FindSurveyByID => {
       return {
         id: 'any_id',
         question: 'any_question',
-        answers: [
+        answer: [
           {
             image: 'any_image',
-            answer: 'any_answer'
+            answers: 'any_answer'
           },
-          { answer: 'other_answer' }
+          { answers: 'other_answer' }
         ],
         date: new Date()
       }

@@ -2,15 +2,16 @@ import { SurveyModel } from '../../../../domain/models/survey'
 import { ListSurveysController } from './listSurvey'
 import { ListSurveys } from '../../../../domain/useCases/list-survey'
 import { ok, serverError } from '../../../helpers/http/http-helper'
+import MockDate from 'mockdate'
 
 const makeFakeSurveys = (): SurveyModel[] => {
   const surveys = [{
     id: 'any_id',
     question: 'any_question',
-    answers: [
+    answer: [
       {
         image: 'any_image',
-        answer: 'any_answer'
+        answers: 'any_answer'
       }
     ],
     date: new Date()
@@ -18,10 +19,10 @@ const makeFakeSurveys = (): SurveyModel[] => {
   {
     id: 'any_id',
     question: 'any_question',
-    answers: [
+    answer: [
       {
         image: 'any_image',
-        answer: 'any_answer'
+        answers: 'any_answer'
       }
     ],
     date: new Date()
@@ -51,6 +52,12 @@ const makeSut = (): SutTypes => {
 }
 
 describe('List surveys', () => {
+  beforeAll(() => {
+    MockDate.set(new Date())
+  })
+  afterAll(() => {
+    MockDate.reset()
+  })
   test('should call list surveys', async () => {
     const { sut, listSurveyStub } = makeSut()
     const listSpy = jest.spyOn(listSurveyStub, 'list')

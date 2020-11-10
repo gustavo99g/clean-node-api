@@ -15,12 +15,14 @@ export class SaveSurveyResultController implements Controller {
     try {
       const { surveyId } = httpRequest.params
       const { answer } = httpRequest.body
+
       const id = surveyId as string
       const survey = await this.findSurveyById.findById(id)
       if (!survey) {
         return forbidden(new InvalidParamError('SurveyId'))
       }
-      const validAnswer = survey.answers.find(a => a.answer === answer)
+
+      const validAnswer = survey.answer.find(a => a.answers === answer)
 
       if (!validAnswer) {
         return forbidden(new InvalidParamError('Answer'))
@@ -36,6 +38,7 @@ export class SaveSurveyResultController implements Controller {
 
       return ok(result)
     } catch (err) {
+      console.log(err)
       return serverError(err)
     }
   }

@@ -1,15 +1,16 @@
 import { SurveyModel } from '../../../domain/models/survey'
 import { listSurveysRepo } from '../../protocols/db/list-survey-repo'
 import { DbListSurvey } from './db-list-surveys'
+import MockDate from 'mockdate'
 
 const makeFakeSurveys = (): SurveyModel[] => {
   const surveys = [{
     id: 'any_id',
     question: 'any_question',
-    answers: [
+    answer: [
       {
         image: 'any_image',
-        answer: 'any_answer'
+        answers: 'any_answer'
       }
     ],
     date: new Date()
@@ -17,10 +18,10 @@ const makeFakeSurveys = (): SurveyModel[] => {
   {
     id: 'any_id',
     question: 'any_question',
-    answers: [
+    answer: [
       {
         image: 'any_image',
-        answer: 'any_answer'
+        answers: 'any_answer'
       }
     ],
     date: new Date()
@@ -49,6 +50,12 @@ const makeSut = (): SutTypes => {
   return { sut, listSurveyRepoStub }
 }
 describe('DbListSurvey', () => {
+  beforeAll(() => {
+    MockDate.set(new Date())
+  })
+  afterAll(() => {
+    MockDate.reset()
+  })
   test('should call listSurvey repo', async () => {
     const { listSurveyRepoStub, sut } = makeSut()
     const listSpy = jest.spyOn(listSurveyRepoStub, 'list')
