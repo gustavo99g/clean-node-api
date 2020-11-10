@@ -2,7 +2,7 @@ import { SaveSurveyResultController } from './saveSurveyResult'
 import { HttpRequest } from '../../../protocols/http'
 import { FindSurveyByID } from '../../../../domain/useCases/find-survey-by-id'
 import { SurveyModel } from '../../../../domain/models/survey'
-import { forbidden } from '../../../helpers/http/http-helper'
+import { forbidden, serverError } from '../../../helpers/http/http-helper'
 import { InvalidParamError } from '../../../errors/invalid-param-error'
 
 interface SutTypes {
@@ -57,5 +57,15 @@ describe('Save Survey Result controller', () => {
     jest.spyOn(findByidSurveyStub, 'findById').mockReturnValue(Promise.resolve(null))
     const res = await sut.handle(fakeRequest())
     expect(res).toEqual(forbidden(new InvalidParamError('SurveyId')))
+  })
+  test('should return 500 if FindById fails', async () => {
+    const { sut, findByidSurveyStub } = makeSut()
+    jest.spyOn(findByidSurveyStub, 'findById').mockImplementationOnce(() => {
+      throw new Error()
+    })
+
+    const httpRequest = fakeRequest()
+    const res = await sut.handle(httpRequest)
+    expect(res).toEqual(serverError(new Error()))
   })
 })
