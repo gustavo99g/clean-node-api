@@ -32,9 +32,9 @@ export class SaveSurveyResultController implements Controller {
         date: new Date()
       }
 
-      await this.saveSurveyResult.save(data)
+      const result = await this.saveSurveyResult.save(data)
 
-      return ok('ok')
+      return ok(result)
     } catch (err) {
       return serverError(err)
     }
