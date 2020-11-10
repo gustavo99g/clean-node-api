@@ -3,7 +3,7 @@ import { HttpRequest } from '../../../protocols/http'
 import { FindSurveyByID } from '../../../../domain/useCases/find-survey-by-id'
 import { SaveSurveyResult, SaveSurveyResultModel } from '../../../../domain/useCases/save-survey-result'
 import { SurveyModel } from '../../../../domain/models/survey'
-import { forbidden, serverError } from '../../../helpers/http/http-helper'
+import { forbidden, serverError, ok } from '../../../helpers/http/http-helper'
 import { InvalidParamError } from '../../../errors/invalid-param-error'
 import { SurveyResultModel } from '../../../../domain/models/survey-result'
 import MockDate from 'mockdate'
@@ -16,22 +16,16 @@ interface SutTypes {
 
 const makeSut = (): SutTypes => {
   const findByidSurveyStub = makeFindByIdSurvey()
-  const saveSurveyResultStub = makeSaveSurveyResult()
+  const saveSurveyResultStub = makeSaveSurveyResultStub()
   const sut = new SaveSurveyResultController(findByidSurveyStub, saveSurveyResultStub)
 
   return { sut, findByidSurveyStub, saveSurveyResultStub }
 }
 
-const makeSaveSurveyResult = (): SaveSurveyResult => {
+const makeSaveSurveyResultStub = (): SaveSurveyResult => {
   class SaveSurveyResultStub implements SaveSurveyResult {
     async save (data: SaveSurveyResultModel): Promise<SurveyResultModel> {
-      return {
-        id: 'any_id',
-        surveyId: 'any_surveyId',
-        accountId: 'any_accountId',
-        date: new Date(),
-        answer: 'any_answer'
-      }
+      return Promise.resolve(makeFakeSaveSurveyResult())
     }
   }
   return new SaveSurveyResultStub()
@@ -66,6 +60,16 @@ const fakeRequest = (): HttpRequest => {
       answer: 'any_answer'
     },
     accountId: 'any_accountId'
+  }
+}
+const makeFakeSaveSurveyResult = (): SurveyResultModel => {
+  return {
+    id: 'any_id',
+    surveyId: 'any_surveyId',
+    accountId: 'any_accountId',
+    date: new Date(),
+    answer: 'any_answer'
+
   }
 }
 
@@ -132,5 +136,11 @@ describe('Save Survey Result controller', () => {
 
     const res = await sut.handle({})
     expect(res).toEqual(serverError(new Error()))
+  })
+  test('should return 200 on success', async () => {
+    const { sut } = makeSut()
+
+    const res = await sut.handle(fakeRequest())
+    expect(res).toEqual(ok(makeFakeSaveSurveyResult()))
   })
 })
