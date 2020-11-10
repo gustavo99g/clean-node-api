@@ -1,5 +1,5 @@
 import { SurveyModel } from '../models/survey'
 
 export interface FindSurveyByID {
-  findById(id: string): Promise<SurveyModel>
+  findById(id: string): Promise<SurveyModel |null>
 }
