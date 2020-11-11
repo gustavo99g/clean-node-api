@@ -37,12 +37,7 @@ describe('DbAddAccount use case', () => {
   })
   test('should return null if findByEmail do not return null', async () => {
     const { sut, findByEmailRepoSpy } = makeSut()
-    jest.spyOn(findByEmailRepoSpy, 'findByEmail').mockReturnValueOnce(Promise.resolve({
-      id: 'any_id',
-      name: 'any_name',
-      email: 'any_email@mail.com',
-      password: 'any_password'
-    }))
+    jest.spyOn(findByEmailRepoSpy, 'findByEmail').mockReturnValueOnce(Promise.resolve(MockAccountModel()))
     const res = await sut.add(mockAccountData())
     expect(res).toBeNull()
   })
@@ -56,7 +51,7 @@ describe('DbAddAccount use case', () => {
   })
   test('Should throw if hasher throws', async () => {
     const { sut, hasherSpy } = makeSut()
-    jest.spyOn(hasherSpy, 'Hash').mockReturnValueOnce(new Promise((resolve, reject) => reject(new Error())))
+    jest.spyOn(hasherSpy, 'Hash').mockReturnValueOnce(Promise.reject(new Error()))
     const result = sut.add(mockAccountData())
     await expect(result).rejects.toThrow()
   })
@@ -66,8 +61,8 @@ describe('DbAddAccount use case', () => {
 
     await sut.add(mockAccountData())
     await expect(addSpy).toHaveBeenCalledWith({
-      name: 'any_name',
       email: 'any_email@mail.com',
+      name: 'any_name',
       password: 'hashed_password'
     })
   })
