@@ -2,18 +2,18 @@ import { AddSurveyController } from './addSurvey'
 import { HttpRequest } from '../../../protocols/http'
 import { badRequest, serverError, noContent } from '../../../helpers/http/http-helper'
 import { ValidationSpy } from '../../../test/mock-validation'
-import { AddSurveyStub } from '../../../test/mock-survey'
+import { AddSurveySpy } from '../../../test/mock-survey'
 import MockDate from 'mockdate'
 
 interface SutTypes {
   sut: AddSurveyController
   validationSpy: ValidationSpy
-  addSurveySpy: AddSurveyStub
+  addSurveySpy: AddSurveySpy
 }
 
 const makeSut = (): SutTypes => {
   const validationSpy = new ValidationSpy()
-  const addSurveySpy = new AddSurveyStub()
+  const addSurveySpy = new AddSurveySpy()
   const sut = new AddSurveyController(validationSpy, addSurveySpy)
 
   return { sut, validationSpy, addSurveySpy }
