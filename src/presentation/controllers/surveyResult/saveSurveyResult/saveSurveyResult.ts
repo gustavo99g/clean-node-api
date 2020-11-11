@@ -22,7 +22,7 @@ export class SaveSurveyResultController implements Controller {
         return forbidden(new InvalidParamError('SurveyId'))
       }
 
-      const validAnswer = survey.answer.find(a => a.answers === answer)
+      const validAnswer = survey.answers.find(a => a.answer === answer)
 
       if (!validAnswer) {
         return forbidden(new InvalidParamError('Answer'))
