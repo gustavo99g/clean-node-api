@@ -3,7 +3,7 @@ import { HttpRequest } from '../../../protocols/http'
 import { forbidden, serverError, ok } from '../../../helpers/http/http-helper'
 import { InvalidParamError } from '../../../errors/invalid-param-error'
 import { SaveSurveyResultSpy } from '../../../test/mock-survey-result'
-import { mockSurveyResultModel } from '../../../../domain/test/mock-survey-result'
+import { mockSurveyResultModel, mockSurverResultData } from '../../../../domain/test/mock-survey-result'
 import { FindByIdSurveySpy } from '../../../test/mock-survey'
 import MockDate from 'mockdate'
 
@@ -81,12 +81,7 @@ describe('Save Survey Result controller', () => {
     const { sut, saveSurveyResultSpy } = makeSut()
     const saveSpy = jest.spyOn(saveSurveyResultSpy, 'save')
     await sut.handle(fakeRequest())
-    expect(saveSpy).toHaveBeenCalledWith({
-      surveyId: 'any_surveyId',
-      accountId: 'any_accountId',
-      date: new Date(),
-      answer: 'any_answer'
-    })
+    expect(saveSpy).toHaveBeenCalledWith(mockSurverResultData())
   })
   test('should return 500 if saveSurveyResult throw', async () => {
     const { sut, saveSurveyResultSpy } = makeSut()
