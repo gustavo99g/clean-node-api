@@ -50,13 +50,13 @@ describe('SURVEY ROUTES', () => {
     test('should return 200 on success with access token', async () => {
       const res = await surveyCollections.insertOne({
         question: 'Qual a melhor linguagem',
-        answer: [{
+        answers: [{
           image: 'any_image',
-          answers: 'Javascript'
+          answer: 'Javascript'
         },
         {
           image: 'any_image',
-          answers: 'C sharp'
+          answer: 'C sharp'
         }
         ],
         date: new Date()
