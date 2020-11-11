@@ -2,7 +2,7 @@ import { SurveyAnswer } from '../models/survey'
 
 export interface AddSurveyModel{
   question: string
-  answer: SurveyAnswer[]
+  answers: SurveyAnswer[]
   date: Date
 }
 

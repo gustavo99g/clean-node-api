@@ -1,38 +1,18 @@
 import { DbAddSurvey } from './db-add-survey'
-import { AddSurveyModel } from '../../../domain/useCases/add-survey'
-import { AddSurveyRepo } from '../../protocols/db/add-survey-repo'
+import { AddSurveyRepoSpy } from '../../test/mock-db-Survey'
+import { mockSurveyData } from '../../../domain/test/mock-survey'
 import MockDate from 'mockdate'
 
 interface SutTypes {
   sut: DbAddSurvey
-  addSurveyStub: AddSurveyRepo
+  addSurveySpy: AddSurveyRepoSpy
 }
 
 const makeSut = (): SutTypes => {
-  const addSurveyStub = makeAddSurveyRepo()
-  const sut = new DbAddSurvey(addSurveyStub)
+  const addSurveySpy = new AddSurveyRepoSpy()
+  const sut = new DbAddSurvey(addSurveySpy)
 
-  return { sut, addSurveyStub }
-}
-
-const makeAddSurveyRepo = (): AddSurveyRepo => {
-  class AddSurveyRepoStub implements AddSurveyRepo {
-    async add (survey: AddSurveyModel): Promise<void> {
-      return Promise.resolve()
-    }
-  }
-  return new AddSurveyRepoStub()
-}
-
-const makeFakeData = (): AddSurveyModel => {
-  return {
-    question: 'any_question',
-    answer: [{
-      image: 'any_image',
-      answer: 'any_answer'
-    }],
-    date: new Date()
-  }
+  return { sut, addSurveySpy }
 }
 
 describe('DbAddSurvey useCase', () => {
@@ -43,15 +23,15 @@ describe('DbAddSurvey useCase', () => {
     MockDate.reset()
   })
   test('should call AddSurveyRepo with correct values', async () => {
-    const { sut, addSurveyStub } = makeSut()
-    const addSpy = jest.spyOn(addSurveyStub, 'add')
-    await sut.add(makeFakeData())
-    expect(addSpy).toHaveBeenCalledWith(makeFakeData())
+    const { sut, addSurveySpy } = makeSut()
+    const addSpy = jest.spyOn(addSurveySpy, 'add')
+    await sut.add(mockSurveyData())
+    expect(addSpy).toHaveBeenCalledWith(mockSurveyData())
   })
   test('should throw if AddSurveyRepo throws', async () => {
-    const { sut, addSurveyStub } = makeSut()
-    jest.spyOn(addSurveyStub, 'add').mockReturnValueOnce(Promise.reject(new Error()))
-    const error = sut.add(makeFakeData())
+    const { sut, addSurveySpy } = makeSut()
+    jest.spyOn(addSurveySpy, 'add').mockReturnValueOnce(Promise.reject(new Error()))
+    const error = sut.add(mockSurveyData())
     await expect(error).rejects.toThrow()
   })
 })

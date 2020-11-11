@@ -6,7 +6,7 @@ import { SurveyRepo } from './survey'
 const makeFakeData = (): AddSurveyModel => {
   return {
     question: 'any_question',
-    answer: [{
+    answers: [{
       image: 'any_image',
       answer: 'any_answer'
     }],
