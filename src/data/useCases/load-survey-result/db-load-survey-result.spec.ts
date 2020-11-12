@@ -30,4 +30,10 @@ describe('Load survey Result', () => {
     const res = await sut.load('any_surveyId')
     expect(res).toEqual(mockSurveyResultModel())
   })
+  test('should throw if LoadSurveyResultRepo throws', async () => {
+    const { sut, loadSurveyResultRepoSpy } = makeSut()
+    jest.spyOn(loadSurveyResultRepoSpy, 'load').mockReturnValueOnce(Promise.reject(new Error()))
+    const res = sut.load('any_surveyId')
+    await expect(res).rejects.toThrow()
+  })
 })
