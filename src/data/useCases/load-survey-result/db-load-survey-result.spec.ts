@@ -25,4 +25,9 @@ describe('Load survey Result', () => {
     await sut.load('any_surveyId')
     expect(loadSpy).toHaveBeenCalledWith('any_surveyId')
   })
+  test('should return a LoadSurveyResult on success', async () => {
+    const { sut } = makeSut()
+    const res = await sut.load('any_surveyId')
+    expect(res).toEqual(mockSurveyResultModel())
+  })
 })
