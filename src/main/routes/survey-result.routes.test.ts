@@ -26,6 +26,24 @@ const mockAccessToken = async (): Promise<string> => {
   return accessToken
 }
 
+const mockSurvey = async (): Promise<string> => {
+  const res = await surveyCollections.insertOne({
+    question: 'Qual a melhor linguagem',
+    answers: [{
+      image: 'any_image',
+      answer: 'Javascript'
+    },
+    {
+      image: 'any_image',
+      answer: 'C sharp'
+    }
+    ],
+    date: new Date()
+
+  })
+  return res.ops[0]._id
+}
+
 describe('SURVEY ROUTES', () => {
   beforeAll(async () => {
     await MongoHelper.connect(process.env.MONGO_URL as string)
@@ -48,21 +66,7 @@ describe('SURVEY ROUTES', () => {
         .expect(403)
     })
     test('should return 200 on success with access token', async () => {
-      const res = await surveyCollections.insertOne({
-        question: 'Qual a melhor linguagem',
-        answers: [{
-          image: 'any_image',
-          answer: 'Javascript'
-        },
-        {
-          image: 'any_image',
-          answer: 'C sharp'
-        }
-        ],
-        date: new Date()
-
-      })
-      const id: string = res.ops[0]._id
+      const id = await mockSurvey()
 
       const accessToken = await mockAccessToken()
       await request(app)
@@ -80,6 +84,15 @@ describe('SURVEY ROUTES', () => {
         .get('/api/survey/any_id/results')
         .send()
         .expect(403)
+    })
+    test('should return 200 on success with access token', async () => {
+      const id = await mockSurvey()
+
+      const accessToken = await mockAccessToken()
+      await request(app)
+        .get(`/api/survey/${id}/results`)
+        .set('x-access-token', accessToken)
+        .expect(200)
     })
   })
 })
