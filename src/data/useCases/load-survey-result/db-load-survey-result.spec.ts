@@ -2,6 +2,7 @@ import { SurveyResultModel } from '../../../domain/models/survey-result'
 import { mockSurveyResultModel } from '../../../domain/test/mock-survey-result'
 import { LoadSurveyResultRepo } from '../../../data/protocols/db/load-survey-result-repo'
 import { DbLoadSurveyResult } from './db-load-survey-result'
+import MockDate from 'mockdate'
 
 const makeLoadSurveyResultRepo = (): LoadSurveyResultRepo => {
   class LoadSurveyResultRepoSpy implements LoadSurveyResultRepo {
@@ -19,6 +20,12 @@ const makeSut = (): any => {
 }
 
 describe('Load survey Result', () => {
+  beforeAll(() => {
+    MockDate.set(new Date())
+  })
+  afterAll(() => {
+    MockDate.reset()
+  })
   test('should call loadSurveyResultRepo with correct values', async () => {
     const { sut, loadSurveyResultRepoSpy } = makeSut()
     const loadSpy = jest.spyOn(loadSurveyResultRepoSpy, 'load')
