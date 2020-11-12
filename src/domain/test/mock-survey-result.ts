@@ -5,7 +5,7 @@ export const mockSurveyResultModel = (): SurveyResultModel => {
   return {
     surveyId: 'any_surveyId',
     question: 'any_question',
-    answer: [{
+    answers: [{
       answer: 'any_answer',
       count: 1,
       percent: 20
