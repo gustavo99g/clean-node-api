@@ -1,9 +1,10 @@
 import { HttpRequest } from '../../../protocols/http'
 import { LoadSurveyController } from './loadSurveyResult'
 import { FindByIdSurveySpy } from '../../../test/mock-survey'
-import { forbidden, serverError } from '../../../helpers/http/http-helper'
+import { forbidden, serverError, ok } from '../../../helpers/http/http-helper'
 import { InvalidParamError } from '../../../errors/invalid-param-error'
 import { LoadSurveyResultSpy } from '../../../test/mock-survey-result'
+import { mockSurveyResultModel } from '../../../../domain/test/mock-survey-result'
 
 interface SutTypes {
   sut: LoadSurveyController
@@ -64,5 +65,10 @@ describe('load Survey Controller', () => {
     const httpRequest = fakeRequest()
     const res = await sut.handle(httpRequest)
     expect(res).toEqual(serverError(new Error()))
+  })
+  test('should 200 on success', async () => {
+    const { sut } = makeSut()
+    const res = await sut.handle(fakeRequest())
+    expect(res).toEqual(ok(mockSurveyResultModel()))
   })
 })
