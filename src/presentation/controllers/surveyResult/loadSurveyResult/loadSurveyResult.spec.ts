@@ -1,6 +1,8 @@
 import { HttpRequest } from '../../../protocols/http'
 import { LoadSurveyController } from './loadSurveyResult'
 import { FindByIdSurveySpy } from '../../../test/mock-survey'
+import { forbidden } from '../../../helpers/http/http-helper'
+import { InvalidParamError } from '../../../errors/invalid-param-error'
 
 interface SutTypes {
   sut: LoadSurveyController
@@ -27,5 +29,11 @@ describe('load Survey Controller', () => {
     const findSpy = jest.spyOn(findSurveyByIdSpy, 'findById')
     await sut.handle(fakeRequest())
     expect(findSpy).toHaveBeenCalledWith('any_surveyId')
+  })
+  test('should return 403 if surveyId is invalid', async () => {
+    const { sut, findSurveyByIdSpy } = makeSut()
+    jest.spyOn(findSurveyByIdSpy, 'findById').mockReturnValue(Promise.resolve(null))
+    const res = await sut.handle(fakeRequest())
+    expect(res).toEqual(forbidden(new InvalidParamError('SurveyId')))
   })
 })
