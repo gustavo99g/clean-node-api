@@ -5,6 +5,7 @@ import { forbidden, serverError, ok } from '../../../helpers/http/http-helper'
 import { InvalidParamError } from '../../../errors/invalid-param-error'
 import { LoadSurveyResultSpy } from '../../../test/mock-survey-result'
 import { mockSurveyResultModel } from '../../../../domain/test/mock-survey-result'
+import MockDate from 'mockdate'
 
 interface SutTypes {
   sut: LoadSurveyController
@@ -28,6 +29,12 @@ const fakeRequest = (): HttpRequest => {
   }
 }
 describe('load Survey Controller', () => {
+  beforeAll(() => {
+    MockDate.set(new Date())
+  })
+  afterAll(() => {
+    MockDate.reset()
+  })
   test('should call findSurveyById with correct values', async () => {
     const { sut, findSurveyByIdSpy } = makeSut()
     const findSpy = jest.spyOn(findSurveyByIdSpy, 'findById')
