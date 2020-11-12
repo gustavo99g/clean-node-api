@@ -52,17 +52,14 @@ describe('Survey Result Repo', () => {
       const sut = new SurveyResultRepo()
       const survey = await makeSurvey()
       const account = await makeAccount()
-      const surveyResult = await sut.save({
+      await sut.save({
         surveyId: survey.id,
         accountId: account.id,
         answer: survey.answers[0].answer,
         date: new Date()
       })
-
-      expect(surveyResult).toBeTruthy()
-      expect(surveyResult.surveyId).toEqual(survey.id)
-      expect(surveyResult.answers[0].count).toBe(1)
-      expect(surveyResult.answers[0].percent).toBe(100)
+      const surveyResult = await surveyCollections.countDocuments()
+      expect(surveyResult).toBe(1)
     })
     test('should update a survey result if its not new ', async () => {
       const sut = new SurveyResultRepo()
@@ -74,16 +71,14 @@ describe('Survey Result Repo', () => {
         answer: survey.answers[0].answer,
         date: new Date()
       })
-      const surveyResult = await sut.save({
+      await sut.save({
         surveyId: survey.id,
         accountId: account.id,
         answer: survey.answers[1].answer,
         date: new Date()
       })
-
-      expect(surveyResult).toBeTruthy()
-      expect(surveyResult.answers[0].count).toBe(1)
-      expect(surveyResult.answers[0].percent).toBe(100)
+      const surveyResult = await surveyCollections.countDocuments()
+      expect(surveyResult).toBe(1)
     })
   })
   describe('LoadBySurveyId', () => {
